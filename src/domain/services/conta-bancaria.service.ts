@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ContaBancaria } from '../entities/conta-bancaria.entity';
 import { ContaBancariaRepository } from '../repositories/conta-bancaria.repository';
 
@@ -10,27 +10,49 @@ export class ContaBancariaService {
     ) { }
 
     async criarConta(conta: ContaBancaria): Promise<ContaBancaria> {
-        // Gerar número da conta
-        // Salvar conta no repositório
-        return this.contaBancariaRepository.create(conta);
+        try {
+            return this.contaBancariaRepository.create(conta);
+        } catch (error) {
+            throw new HttpException('Houve um erro ao criar conta', HttpStatus.BAD_REQUEST);
+        }
     }
 
     async atualizarStatus(id: string, status: boolean): Promise<ContaBancaria> {
-        const conta = await this.contaBancariaRepository.findById(id);
-        if (!conta) {
-            throw new Error('Conta não encontrada');
+        try {
+            const conta = await this.contaBancariaRepository.findByPk(id);
+
+            if (!conta) {
+                throw new HttpException('Conta não encontrada', HttpStatus.NOT_FOUND);
+            }
+
+            conta.status = status;
+            await conta.save();
+
+            return conta;
+        } catch (error) {
+            throw new HttpException('Houve um erro ao atualizar a conta', HttpStatus.BAD_REQUEST);
         }
-        conta.status = status;
-        return this.contaBancariaRepository.update(conta); // Chama o método update no repositório
     }
 
     async obterConta(id: string): Promise<ContaBancaria | null> {
-        return this.contaBancariaRepository.findById(id);
+        try {
+            const conta = await this.contaBancariaRepository.findByPk(id);
+
+            if (!conta) {
+                throw new HttpException('Conta não encontrada', HttpStatus.NOT_FOUND);
+            }
+
+            return conta;
+        } catch (error) {
+            throw new HttpException('Houve um erro ao procurar a conta', HttpStatus.BAD_REQUEST);
+        }
     }
 
     async update(conta: ContaBancaria): Promise<ContaBancaria> {
-        return this.contaBancariaRepository.update(conta);
+        try {
+            return this.contaBancariaRepository.update(conta);
+        } catch (error) {
+            throw new HttpException('Houve um erro ao atualizar a conta', HttpStatus.BAD_REQUEST);
+        }
     }
-
-    // Outros métodos de serviço de domínio
 }
