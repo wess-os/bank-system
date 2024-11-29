@@ -1,6 +1,6 @@
 import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
 import { IsNotEmpty, IsString, IsDate } from 'class-validator';
-import { IsCpf } from 'src/utils/is-cpf.decorator';
+import { IsCpf } from '../validators/is-cpf.decorator';
 import { ContaBancaria } from './conta-bancaria.entity';
 
 @Table
