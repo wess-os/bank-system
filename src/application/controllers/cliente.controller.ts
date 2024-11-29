@@ -13,7 +13,6 @@ export class ClienteController {
 
     @Get(':id')
     async obterCliente(@Param('id') id: string): Promise<Cliente | null> {
-        console.log(id);
         return this.clienteService.obterCliente(id);
     }
 }
