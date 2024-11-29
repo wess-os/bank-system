@@ -4,9 +4,16 @@ import { ContaBancariaController } from '../../application/controllers/conta-ban
 import { ContaBancariaService } from '../../domain/services/conta-bancaria.service';
 import { SequelizeContaBancariaRepository } from '../../infrastructure/repositories/sequelize/conta-bancaria.repository';
 import { ContaBancaria } from '../../domain/entities/conta-bancaria.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [NestSequelizeModule.forFeature([ContaBancaria])],
+    imports: [
+        NestSequelizeModule.forFeature([ContaBancaria]),
+        JwtModule.register({
+            secret: process.env.JWT_SECRET,
+            signOptions: { expiresIn: '1h' },
+        }),
+    ],
     controllers: [ContaBancariaController],
     providers: [
         ContaBancariaService,
@@ -14,4 +21,5 @@ import { ContaBancaria } from '../../domain/entities/conta-bancaria.entity';
     ],
     exports: [ContaBancariaService],
 })
+
 export class ContaBancariaModule { }

@@ -5,9 +5,17 @@ import { MovimentacaoService } from '../../domain/services/movimentacao.service'
 import { SequelizeMovimentacaoRepository } from '../../infrastructure/repositories/sequelize/movimentacao.repository';
 import { Movimentacao } from '../../domain/entities/movimentacao.entity';
 import { ContaBancariaModule } from './conta-bancaria.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [NestSequelizeModule.forFeature([Movimentacao]), ContaBancariaModule],
+    imports: [
+        NestSequelizeModule.forFeature([Movimentacao]),
+        ContaBancariaModule,
+        JwtModule.register({
+            secret: process.env.JWT_SECRET,
+            signOptions: { expiresIn: '1h' },
+        }),
+    ],
     controllers: [MovimentacaoController],
     providers: [
         MovimentacaoService,
@@ -15,4 +23,5 @@ import { ContaBancariaModule } from './conta-bancaria.module';
     ],
     exports: [MovimentacaoService],
 })
+
 export class MovimentacaoModule { }
