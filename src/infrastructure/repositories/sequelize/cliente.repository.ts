@@ -14,12 +14,7 @@ export class SequelizeClienteRepository implements ClienteRepository {
         return this.clienteModel.create(cliente);
     }
 
-    async findById(id: string): Promise<Cliente | null> {
-        console.log(id);
-        const cliente = await this.clienteModel.findByPk(id);
-        if (!cliente) {
-            throw new Error('Cliente não encontrado');
-        }
-        return cliente;
+    async findByPk(id: string): Promise<Cliente | null> {
+        return await this.clienteModel.findByPk(id);
     }
 }

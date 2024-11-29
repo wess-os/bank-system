@@ -15,13 +15,11 @@ export class SequelizeContaBancariaRepository implements ContaBancariaRepository
     }
 
     async update(conta: ContaBancaria): Promise<ContaBancaria> {
-        await conta.save();  // O método save atualiza a entidade no Sequelize
+        await conta.save();
         return conta;
     }
 
-    async findById(id: string): Promise<ContaBancaria | null> {
+    async findByPk(id: string): Promise<ContaBancaria | null> {
         return this.contaModel.findByPk(id);
     }
-
-    // Outros métodos de CRUD
 }

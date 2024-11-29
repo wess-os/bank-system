@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Movimentacao } from '../../../domain/entities/movimentacao.entity';
 import { MovimentacaoRepository } from '../../../domain/repositories/movimentacao.repository';
-import { Op } from 'sequelize';  // Importando o Op para operadores do Sequelize
+import { Op } from 'sequelize';
 
 @Injectable()
 export class SequelizeMovimentacaoRepository implements MovimentacaoRepository {
@@ -15,7 +15,6 @@ export class SequelizeMovimentacaoRepository implements MovimentacaoRepository {
         return this.movimentacaoModel.create(movimentacao);
     }
 
-    // Método para buscar movimentações por contaId, usando Op.or
     async findByContaId(contaId: string): Promise<Movimentacao[]> {
         return this.movimentacaoModel.findAll({
             where: {
