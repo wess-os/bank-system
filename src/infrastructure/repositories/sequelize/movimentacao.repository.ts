@@ -11,8 +11,8 @@ export class SequelizeMovimentacaoRepository implements MovimentacaoRepository {
         private movimentacaoModel: typeof Movimentacao,
     ) { }
 
-    async create(movimentacao: Movimentacao): Promise<Movimentacao> {
-        return this.movimentacaoModel.create(movimentacao);
+    async create(movimentacao: Partial<Movimentacao>): Promise<Movimentacao> {
+        return this.movimentacaoModel.create(movimentacao as Movimentacao);
     }
 
     async findByContaId(contaId: string): Promise<Movimentacao[]> {

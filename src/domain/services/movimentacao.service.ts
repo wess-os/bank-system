@@ -1,61 +1,68 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Movimentacao, TipoMovimentacao } from '../entities/movimentacao.entity';
 import { ContaBancariaService } from './conta-bancaria.service';
-import { MovimentacaoRepository } from '../repositories/movimentacao.repository';
+import { SequelizeMovimentacaoRepository } from 'src/infrastructure/repositories/sequelize/movimentacao.repository';
 
 @Injectable()
 export class MovimentacaoService {
     constructor(
-        @Inject('MovimentacaoRepository')
-        private movimentacaoRepository: MovimentacaoRepository,
+        private movimentacaoRepository: SequelizeMovimentacaoRepository,
         private contaBancariaService: ContaBancariaService,
     ) { }
 
-    async realizarDeposito(contaId: string, valor: number): Promise<Movimentacao> {
+    async realizarDeposito(contaDestinoId: string, valor: number): Promise<Movimentacao> {
         try {
-            const conta = await this.contaBancariaService.obterConta(contaId);
+            const contaDestino = await this.contaBancariaService.obterConta(contaDestinoId);
 
-            if (!conta || !conta.status) {
+            if (!contaDestino) {
+                throw new HttpException('Conta não encontrada', HttpStatus.BAD_REQUEST);
+            }
+
+            if (!contaDestino.status) {
                 throw new HttpException('Conta inválida ou inativa', HttpStatus.BAD_REQUEST);
             }
 
-            conta.saldoInicial += valor;
-            await conta.save();
+            contaDestino.saldoInicial += valor;
+            await contaDestino.save();
 
-            const movimentacao = new Movimentacao({
+            const movimentacao = {
                 dataHora: new Date(),
                 tipo: TipoMovimentacao.DEPOSITO,
                 valor,
-                contaOrigem: conta,
-            });
+                contaDestinoId: contaDestino.id,
+            } as Movimentacao;
 
             return this.movimentacaoRepository.create(movimentacao);
         } catch (error) {
-            throw new HttpException('Houve um erro ao realizar depósito', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao realizar depósito: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
-    async realizarSaque(contaId: string, valor: number): Promise<Movimentacao> {
+    async realizarSaque(contaOrigemId: string, valor: number): Promise<Movimentacao> {
         try {
-            const conta = await this.contaBancariaService.obterConta(contaId);
+            const contaOrigem = await this.contaBancariaService.obterConta(contaOrigemId);
 
-            if (!conta || !conta.status || conta.saldoInicial < valor) {
+            if (!contaOrigem) {
+                throw new HttpException('Conta não encontrada', HttpStatus.BAD_REQUEST);
+            }
+
+            if (!contaOrigem.status || contaOrigem.saldoInicial < valor) {
                 throw new HttpException('Conta inválida, inativa ou saldo insuficiente', HttpStatus.BAD_REQUEST);
             }
 
-            conta.saldoInicial -= valor;
-            await conta.save();
+            contaOrigem.saldoInicial -= valor;
+            await contaOrigem.save();
 
-            const movimentacao = new Movimentacao({
+            const movimentacao = {
                 dataHora: new Date(),
                 tipo: TipoMovimentacao.SAQUE,
                 valor,
-                contaOrigem: conta,
-            });
+                contaOrigemId: contaOrigem.id,
+            } as Movimentacao;
 
             return this.movimentacaoRepository.create(movimentacao);
         } catch (error) {
-            throw new HttpException('Houve um erro ao realizar saque', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao realizar saque: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -84,25 +91,27 @@ export class MovimentacaoService {
             await contaOrigem.save();
             await contaDestino.save();
 
-            const movimentacao = new Movimentacao({
+            const movimentacao = {
                 dataHora: new Date(),
                 tipo: TipoMovimentacao.TRANSFERENCIA,
                 valor,
-                contaOrigem,
-                contaDestino,
-            });
+                contaOrigemId: contaOrigem.id,
+                contaDestinoId: contaDestino.id,
+            } as Movimentacao;
 
             return this.movimentacaoRepository.create(movimentacao);
         } catch (error) {
-            throw new HttpException('Houve um erro ao realizar transferência', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao realizar transferência: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async obterMovimentacoes(contaId: string): Promise<Movimentacao[]> {
         try {
-            return this.movimentacaoRepository.findByContaId(contaId);
+            const movimentacoes = await this.movimentacaoRepository.findByContaId(contaId);
+
+            return movimentacoes;
         } catch (error) {
-            throw new HttpException('Houve um erro ao obter as movimentações', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao obter as movimentações: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 }

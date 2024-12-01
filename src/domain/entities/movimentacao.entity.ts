@@ -18,17 +18,17 @@ export class Movimentacao extends Model<Movimentacao> {
     id: number;
 
     @Column(DataType.DATE)
-    @IsNotEmpty({ message: 'A data e hora da movimentação são obrigatórias' })
+    @IsNotEmpty()
     @IsDate()
     dataHora: Date;
 
     @Column
-    @IsNotEmpty({ message: 'O tipo de movimentação é obrigatório' })
+    @IsNotEmpty()
     @IsEnum(TipoMovimentacao)
     tipo: TipoMovimentacao;
 
     @Column(DataType.FLOAT)
-    @IsNotEmpty({ message: 'O valor da movimentação é obrigatório' })
+    @IsNotEmpty()
     @IsNumber()
     valor: number;
 

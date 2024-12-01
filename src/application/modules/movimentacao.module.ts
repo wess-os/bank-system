@@ -23,5 +23,5 @@ import { JwtModule } from '@nestjs/jwt';
     ],
     exports: [MovimentacaoService],
 })
-
 export class MovimentacaoModule { }
+
