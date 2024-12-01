@@ -12,21 +12,24 @@ export class ContaBancaria extends Model<ContaBancaria> {
     })
     id: number;
 
-    @Column
-    @IsNotEmpty({ message: 'O número da conta é obrigatório' })
+    @Column({
+        unique: true,
+    })
     numero: string;
 
-    @Column(DataType.FLOAT)
-    @IsNotEmpty({ message: 'O saldo inicial é obrigatório' })
+    @Column({
+        type: DataType.FLOAT,
+        defaultValue: 0,
+    })
     saldoInicial: number;
 
     @Column
-    @IsNotEmpty({ message: 'O status da conta é obrigatório' })
+    @IsNotEmpty()
     status: boolean;
 
     @ForeignKey(() => Cliente)
     @Column(DataType.INTEGER)
-    @IsNotEmpty({ message: 'O ID do cliente é obrigatório' })
+    @IsNotEmpty()
     clienteId: number;
 
     @BelongsTo(() => Cliente)

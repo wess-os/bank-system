@@ -1,19 +1,26 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ContaBancaria } from '../entities/conta-bancaria.entity';
-import { ContaBancariaRepository } from '../repositories/conta-bancaria.repository';
+import { SequelizeContaBancariaRepository } from 'src/infrastructure/repositories/sequelize/conta-bancaria.repository';
 
 @Injectable()
 export class ContaBancariaService {
     constructor(
-        @Inject('ContaBancariaRepository')
-        private contaBancariaRepository: ContaBancariaRepository,
+        private contaBancariaRepository: SequelizeContaBancariaRepository,
     ) { }
 
     async criarConta(conta: ContaBancaria): Promise<ContaBancaria> {
         try {
+            if (!conta.status) {
+                throw new HttpException('A conta deve ter um status', HttpStatus.BAD_REQUEST);
+            }
+
+            if (!conta.clienteId) {
+                throw new HttpException('O cliente da conta é obrigatório', HttpStatus.BAD_REQUEST);
+            }
+
             return this.contaBancariaRepository.create(conta);
         } catch (error) {
-            throw new HttpException('Houve um erro ao criar conta', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao criar conta: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -30,7 +37,7 @@ export class ContaBancariaService {
 
             return conta;
         } catch (error) {
-            throw new HttpException('Houve um erro ao atualizar a conta', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao atualizar a conta: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -44,7 +51,7 @@ export class ContaBancariaService {
 
             return conta;
         } catch (error) {
-            throw new HttpException('Houve um erro ao procurar a conta', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao procurar a conta: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -52,7 +59,7 @@ export class ContaBancariaService {
         try {
             return this.contaBancariaRepository.update(conta);
         } catch (error) {
-            throw new HttpException('Houve um erro ao atualizar a conta', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Houve um erro ao atualizar a conta: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 }

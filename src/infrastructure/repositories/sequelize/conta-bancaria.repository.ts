@@ -11,6 +11,7 @@ export class SequelizeContaBancariaRepository implements ContaBancariaRepository
     ) { }
 
     async create(conta: ContaBancaria): Promise<ContaBancaria> {
+        conta.numero = this.gerarNumeroConta();
         return this.contaModel.create(conta);
     }
 
@@ -21,5 +22,9 @@ export class SequelizeContaBancariaRepository implements ContaBancariaRepository
 
     async findByPk(id: string): Promise<ContaBancaria | null> {
         return this.contaModel.findByPk(id);
+    }
+
+    private gerarNumeroConta(): string {
+        return Math.floor(1000000000 + Math.random() * 9000000000).toString();
     }
 }
