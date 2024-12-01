@@ -11,7 +11,7 @@ import { UserModule } from './application/modules/user.module';
     ClienteModule,
     ContaBancariaModule,
     MovimentacaoModule,
-    UserModule
+    UserModule,
   ],
 })
 export class AppModule { }
