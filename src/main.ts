@@ -9,15 +9,24 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Sistema Bancário')
-    .setDescription('API do sistema bancário')
+    .setDescription('API para gerenciamento de clientes, contas bancárias e movimentações financeiras.')
     .setVersion('1.0')
+    .addServer(`http://localhost:3001`)
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
+      },
+      'JwtAuthGuard',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api', app, document);
 
-  console.log('Swagger está disponível em: http://localhost:3001/api');
+  console.log(`Swagger está disponível em: http://localhost:3001/api`);
 
-  await app.listen(3001);
+  await app.listen(3001, '0.0.0.0');
 }
 bootstrap();
