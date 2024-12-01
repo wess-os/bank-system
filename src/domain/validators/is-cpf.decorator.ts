@@ -20,3 +20,9 @@ export function IsCpf(validationOptions?: ValidationOptions) {
         });
     };
 }
+
+export function validarCpf(cpfValue: string): boolean {
+    const cpfLimpo = cpfValue.replace(/\D/g, '');
+
+    return cpfLimpo.length === 11 && cpf.isValid(cpfLimpo);
+}
