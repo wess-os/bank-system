@@ -11,17 +11,17 @@ export class User extends Model<User> {
     id: number;
 
     @Column
-    @IsNotEmpty({ message: 'O nome é obrigatório' })
+    @IsNotEmpty()
     nome: string;
 
     @Column({
         unique: true,
     })
-    @IsEmail({}, { message: 'E-mail inválido' })
+    @IsEmail({})
     email: string;
 
     @Column
-    @IsNotEmpty({ message: 'A senha é obrigatória' })
-    @MinLength(6, { message: 'A senha deve ter pelo menos 6 caracteres' })
+    @IsNotEmpty()
+    @MinLength(6)
     senha: string;
 }
