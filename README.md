@@ -22,10 +22,10 @@ git clone https://github.com/wess-os/bank-system.git
 2. Change .env-example to .env and fill in the necessary environment variables:
 
 ```bash
-DB_HOST=localhost
+DB_HOST=db
 DB_PORT=5432
 DB_USERNAME=postgres
-DB_PASSWORD=root
+DB_PASSWORD=postgres
 DB_DATABASE=bank-system
 JWT_SECRET=your-secret-key
 ```
