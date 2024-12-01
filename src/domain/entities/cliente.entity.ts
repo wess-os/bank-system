@@ -13,17 +13,19 @@ export class Cliente extends Model<Cliente> {
     id: number;
 
     @Column
-    @IsNotEmpty({ message: 'O nome é obrigatório' })
+    @IsNotEmpty()
     @IsString()
     nome: string;
 
-    @Column
-    @IsNotEmpty({ message: 'O CPF é obrigatório' })
+    @Column({
+        unique: true,
+    })
+    @IsNotEmpty()
     @IsCpf()
     cpf: string;
 
     @Column(DataType.DATE)
-    @IsNotEmpty({ message: 'A data de nascimento é obrigatória' })
+    @IsNotEmpty()
     @IsDate()
     dataNascimento: Date;
 

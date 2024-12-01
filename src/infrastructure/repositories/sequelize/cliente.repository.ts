@@ -17,4 +17,8 @@ export class SequelizeClienteRepository implements ClienteRepository {
     async findByPk(id: string): Promise<Cliente | null> {
         return await this.clienteModel.findByPk(id);
     }
+
+    async findByCpf(cpf: string): Promise<Cliente | null> {
+        return this.clienteModel.findOne({ where: { cpf } });
+    }
 }
